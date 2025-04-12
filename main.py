@@ -5,7 +5,7 @@ from bot.handlers import router
 from config.setting import API_TOKEN
 
 WEBHOOK_PATH = "/webhook"
-WEBHOOK_URL = f"https://new-geese-wink.loca.lt{WEBHOOK_PATH}"
+WEBHOOK_URL = f"https://yourcustomname.loca.lt{WEBHOOK_PATH}"
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
@@ -33,7 +33,19 @@ async def create_app():
 
     app.router.add_post(WEBHOOK_PATH, SimpleRequestHandler(dispatcher=dp, bot=bot))
 
+    app.router.add_post('/', handle)
+
     return app
 
+async def handle(request):
+    """Обработчик для вебхука"""
+    try:
+        data = await request.json() 
+        print(f"Полученные данные: {data}")
+        
+        return web.Response(text="Данные получены и обработаны.")
+    except Exception as e:
+        return web.Response(text=f"Ошибка при обработке данных: {e}", status=500)
+
 if __name__ == "__main__":
-    web.run_app(create_app(), port=8000)
+    web.run_app(create_app(), port=8080)
